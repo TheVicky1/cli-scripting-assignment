@@ -1,0 +1,4 @@
+Secure numeric umask:
+077
+Secure symbolic umask:
+u=rwx,g=,o=

@@ -1,0 +1,112 @@
+SECURE PROJECT WORKSPACE SETUP REPORT
+
+1. Directory Structure Created
+
+Commands Used:
+mkdir -p secure_workspace/{documents,source,data,logs}
+touch secure_workspace/documents/project_plan.txt
+touch secure_workspace/source/config.env
+touch secure_workspace/data/team_data.txt
+touch secure_workspace/logs/application.log
+
+Recorded Structure (directory_structure.txt):
+secure_workspace
+secure_workspace/logs
+secure_workspace/logs/application.log
+secure_workspace/documents
+secure_workspace/documents/project_plan.txt
+secure_workspace/source
+secure_workspace/source/config.env
+secure_workspace/data
+secure_workspace/data/team_data.txt
+
+Observation:
+The workspace is separated into dedicated directories for source files, logs, documentation, private files, and data. This improves organization and makes permission control straightforward.
+
+2. File Permissions Before and After Modification
+
+Permissions Before Modification (permissions_before.txt):
+Permissions: drwxrwxr-x (775) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace
+Permissions: drwxrwxr-x (775) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/logs
+Permissions: -rw-rw-r-- (664) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/logs/application.log
+Permissions: drwxrwxr-x (775) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/documents
+Permissions: -rw-rw-r-- (664) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/documents/project_plan.txt
+Permissions: drwxrwxr-x (775) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/source
+Permissions: -rw-rw-r-- (664) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/source/config.env
+Permissions: drwxrwxr-x (775) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/data
+Permissions: -rw-rw-r-- (664) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/data/team_data.txt
+
+Modification Commands:
+chmod 700 secure_workspace
+chmod 700 secure_workspace/documents
+chmod 700 secure_workspace/source
+chmod 700 secure_workspace/data
+chmod 700 secure_workspace/logs
+chmod 600 secure_workspace/documents/project_plan.txt
+chmod 600 secure_workspace/source/config.env
+chmod 600 secure_workspace/data/team_data.txt
+chmod 600 secure_workspace/logs/application.log
+umask 077
+touch secure_workspace/documents/private_notes.txt
+mkdir secure_workspace/private
+
+Permissions After Modification (permissions_after.txt):
+Permissions: drwx------ (700) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace
+Permissions: drwx------ (700) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/private
+Permissions: drwx------ (700) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/logs
+Permissions: -rw------- (600) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/logs/application.log
+Permissions: drwx------ (700) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/documents
+Permissions: -rw------- (600) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/documents/private_notes.txt
+Permissions: -rw------- (600) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/documents/project_plan.txt
+Permissions: drwx------ (700) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/source
+Permissions: -rw------- (600) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/source/config.env
+Permissions: drwx------ (700) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/data
+Permissions: -rw------- (600) | Owner: ubuntu | Group: ubuntu | Name: secure_workspace/data/team_data.txt
+
+Observation:
+Before hardening, directories were group-accessible (775) and files were group-readable/writable (664) due to umask 0002. After hardening, directories became owner-only (700) and files became owner-only (600).
+
+3. Ownership Details
+
+Owner: ubuntu
+Group: ubuntu
+
+Observation:
+All workspace files and directories in the screenshot are owned by `ubuntu:ubuntu`, so owner permissions apply consistently to the same account.
+
+4. Umask Value Used
+
+Default Umask Before Change (umask_before.txt):
+Numeric umask:
+0002
+Symbolic umask:
+u=rwx,g=rwx,o=rx
+
+Secure Umask Applied:
+umask 077
+
+Umask After Change (umask_after.txt):
+Secure numeric umask:
+077
+Secure symbolic umask:
+u=rwx,g=,o=
+
+Observation:
+A secure umask of 0077 prevents permissions from being granted to group and others by default for newly created files and directories.
+
+5. Explanation of How Permissions Protect Project Data
+
+- Directory mode 700 allows only the owner to enter and list directories.
+- File mode 600 allows only the owner to read and modify file contents.
+- Group and other users have no read, write, or execute access.
+- With umask 077, future files and directories are private by default.
+
+Together, these controls reduce accidental exposure of project plans, configuration files, data files, and logs.
+
+6. Screenshot Evidence
+
+Screenshots showing permissions and ownership are stored in:
+Question_2/screenshot/
+
+Conclusion:
+The secure workspace was created successfully, baseline permissions were recorded, restrictive permissions were enforced, ownership was verified, and secure defaults were configured via umask 077.

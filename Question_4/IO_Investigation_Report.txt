@@ -1,0 +1,194 @@
+FILE ACCESS AND I/O INVESTIGATION REPORT
+
+1. Application Log Creation
+
+Command:
+touch application.log
+ls -l application.log
+
+Observation:
+The touch command created an empty file named application.log.
+The ls -l command displayed its permissions, ownership, size, and modification time.
+
+2. Writing to a Log Using File Descriptor 3
+
+Commands:
+exec 3>>application.log
+echo "Application started successfully" >&3
+echo "Log entry written through file descriptor 3" >&3
+cat application.log
+
+Output:
+Application started successfully
+Log entry written through file descriptor 3
+
+Observation:
+The exec command opened application.log in append mode using file descriptor 3.
+The two echo commands wrote data into the log through descriptor 3 without overwriting existing contents.
+
+3. File Descriptor Observations
+
+Commands:
+ls -l /proc/$$/fd
+readlink /proc/$$/fd/3
+
+Output:
+total 0
+lrwx------ 1 ubuntu ubuntu 64 Jun 20 16:04 0 -> /dev/pts/0
+lrwx------ 1 ubuntu ubuntu 64 Jun 20 16:04 1 -> /dev/pts/0
+lrwx------ 1 ubuntu ubuntu 64 Jun 20 16:04 2 -> /dev/pts/0
+lrwx------ 1 ubuntu ubuntu 64 Jun 20 16:04 255 -> /dev/pts/0
+l-wx------ 1 ubuntu ubuntu 64 Jun 20 16:04 3 -> /home/ubuntu/linux_lab_assignment/Question_4/application.log
+
+File descriptor 3 target:
+/home/ubuntu/linux_lab_assignment/Question_4/application.log
+
+Observation:
+Descriptors 0, 1, and 2 represented standard input, standard output, and standard error.
+Descriptor 3 was open for writing and pointed to application.log.
+
+4. Open Files Identified
+
+Commands:
+lsof -p $$ | head -n 20
+lsof -p $$ | grep application.log
+
+Important output:
+COMMAND  PID   USER  FD   TYPE DEVICE SIZE/OFF   NODE NAME
+bash    6498 ubuntu cwd    DIR    8,1     4096 262223 /home/ubuntu/linux_lab_assignment/Question_4
+bash    6498 ubuntu rtd    DIR    8,1     4096      2 /
+bash    6498 ubuntu txt    REG    8,1  1609176   1751 /usr/bin/bash
+bash    6498 ubuntu   3w    REG    8,1       77 262221 /home/ubuntu/linux_lab_assignment/Question_4/application.log
+
+Observation:
+The lsof command displayed files and resources opened by the current Bash process.
+The value 3w showed that application.log was open through file descriptor 3 in write mode.
+
+5. Closing File Descriptor 3
+
+Command:
+exec 3>&-
+
+Observation:
+The command closed file descriptor 3.
+After it was closed, application.log no longer appeared as descriptor 3 in /proc/$$/fd or lsof output.
+
+6. Standard Output Redirection
+
+Commands:
+echo "This is standard output from the application" > stdout.txt
+cat stdout.txt
+
+Output:
+This is standard output from the application
+
+Observation:
+The greater-than operator redirected standard output, file descriptor 1, into stdout.txt.
+The output was saved in the file instead of being displayed directly in the terminal.
+
+7. Standard Error Redirection
+
+Commands:
+ls /directory_that_does_not_exist 2> stderr.txt
+cat stderr.txt
+
+Output:
+ls: cannot access '/directory_that_does_not_exist': No such file or directory
+
+Observation:
+The invalid ls command generated an error through standard error, file descriptor 2.
+The 2> operator redirected the error message into stderr.txt.
+
+8. Separate Output and Error Redirection
+
+Command:
+ls /etc /directory_that_does_not_exist > normal_output.txt 2> error_output.txt
+
+Normal output:
+The valid listing of the /etc directory was stored in normal_output.txt.
+
+Error output:
+ls: cannot access '/directory_that_does_not_exist': No such file or directory
+
+Observation:
+Standard output was redirected into normal_output.txt.
+Standard error was redirected separately into error_output.txt, showing that Linux manages them as independent streams.
+
+9. Combined Output and Error Redirection
+
+Command:
+ls /etc /directory_that_does_not_exist > combined_output.txt 2>&1
+
+Observation:
+The normal directory listing and the error message were both stored in combined_output.txt.
+The expression 2>&1 redirected standard error to the same destination as standard output.
+
+10. Overwrite and Append Redirection
+
+Commands:
+echo "First log entry" > redirection_log.txt
+echo "Second log entry" >> redirection_log.txt
+cat redirection_log.txt
+
+Output:
+First log entry
+Second log entry
+
+Observation:
+The > operator created or overwrote the destination file.
+The >> operator appended the second entry without deleting the existing contents.
+
+11. Resource Limits
+
+Commands:
+ulimit -a
+ulimit -n
+
+Output:
+-t: cpu time (seconds)              unlimited
+-f: file size (blocks)              unlimited
+-d: data seg size (kbytes)          unlimited
+-s: stack size (kbytes)             8176
+-c: core file size (blocks)         0
+-v: address space (kbytes)          unlimited
+-l: locked-in-memory size (kbytes)  unlimited
+-u: processes                       2666
+-n: file descriptors                1048575
+
+Selected values:
+Open files limit: 1048575
+Stack size limit: 8176 KB
+Maximum user processes: 2666
+Core file size: 0
+
+Observation:
+The ulimit command displayed resource limits applied to the current shell and its child processes.
+The open-files limit controls the maximum number of file descriptors that a process may use simultaneously.
+
+12. Explanation of Linux File I/O
+
+Linux represents open files and other input/output resources using numeric file descriptors.
+
+The standard descriptors are:
+0 — Standard input
+1 — Standard output
+2 — Standard error
+
+Additional files opened by a process normally receive descriptor numbers 3 and above.
+
+The Linux kernel maintains information about each open file, including its access mode, current offset, and reference count. Shell redirection changes the destination associated with a file descriptor.
+
+The > operator redirects standard output and overwrites the destination file.
+The >> operator appends output to a file.
+The 2> operator redirects standard error.
+The 2>&1 expression redirects standard error to the same destination as standard output.
+
+Utilities such as lsof and the /proc file system help identify open files and file descriptors. The ulimit command displays resource restrictions applied to processes.
+
+Conclusion:
+
+The investigation successfully demonstrated how Linux opens files, assigns file descriptors, and redirects standard output and standard error.
+
+The application log was opened through file descriptor 3, open files were identified using lsof, output and errors were redirected into separate and combined files, and process resource limits were examined.
+
+These commands are useful for investigating application logging problems and understanding Linux file I/O management.

@@ -1,0 +1,4 @@
+Numeric umask:
+022
+Symbolic umask:
+u=rwx,g=rx,o=rx

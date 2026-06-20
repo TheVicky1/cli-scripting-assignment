@@ -1,0 +1,4 @@
+== hard link after rm original ==
+Important project data for link analysis
+== symbolic link after rm original ==
+cat: symlink.txt: No such file or directory

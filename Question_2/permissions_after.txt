@@ -1,0 +1,11 @@
+Permissions: drwx------ (700) | Owner: taheer | Group: staff | Name: secure_workspace
+Permissions: drwx------ (700) | Owner: taheer | Group: staff | Name: secure_workspace/source
+Permissions: -rw------- (600) | Owner: taheer | Group: staff | Name: secure_workspace/source/config.env
+Permissions: drwx------ (700) | Owner: taheer | Group: staff | Name: secure_workspace/logs
+Permissions: -rw------- (600) | Owner: taheer | Group: staff | Name: secure_workspace/logs/application.log
+Permissions: drwx------ (700) | Owner: taheer | Group: staff | Name: secure_workspace/private
+Permissions: drwx------ (700) | Owner: taheer | Group: staff | Name: secure_workspace/documents
+Permissions: -rw------- (600) | Owner: taheer | Group: staff | Name: secure_workspace/documents/project_plan.txt
+Permissions: -rw------- (600) | Owner: taheer | Group: staff | Name: secure_workspace/documents/private_notes.txt
+Permissions: drwx------ (700) | Owner: taheer | Group: staff | Name: secure_workspace/data
+Permissions: -rw------- (600) | Owner: taheer | Group: staff | Name: secure_workspace/data/team_data.txt

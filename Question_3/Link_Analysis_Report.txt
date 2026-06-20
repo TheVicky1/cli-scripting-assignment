@@ -1,0 +1,153 @@
+FILE SYSTEM AND LINK ANALYSIS REPORT
+
+1. Creation of Original File
+
+Command:
+echo "Important project data for link analysis" > original.txt
+
+Output:
+Important project data for link analysis
+
+Observation:
+The command created a regular file named original.txt.
+The redirection operator wrote the provided text to disk.
+At creation time, this file had one inode reference.
+
+2. Creation of Hard Link
+
+Command:
+ln original.txt hardlink.txt
+
+Output (from inode_information.txt):
+262283 -rw------- 2 ubuntu ubuntu 41 Jun 20 15:34 hardlink.txt
+262283 -rw------- 2 ubuntu ubuntu 41 Jun 20 15:34 original.txt
+
+Observation:
+The hard link was created successfully.
+original.txt and hardlink.txt share the same inode number (262283).
+Link count is 2, meaning both names reference the same file data.
+
+3. Creation of Symbolic Link
+
+Command:
+ln -s original.txt symlink.txt
+
+Output (from inode_information.txt):
+262293 lrwxrwxrwx 1 ubuntu ubuntu 12 Jun 20 15:35 symlink.txt -> original.txt
+
+Observation:
+The symbolic link was created as a separate file.
+It has a different inode (262293) and points to the path original.txt.
+The arrow shown by ls -li confirms the symbolic-link target.
+
+4. Inode Numbers
+
+original.txt inode:
+262283
+
+hardlink.txt inode:
+262283
+
+symlink.txt inode:
+262293
+
+Observation:
+original.txt and hardlink.txt have identical inode numbers.
+symlink.txt has a different inode because it is a separate link object.
+
+5. Metadata Collected
+
+Commands:
+ls -li original.txt hardlink.txt symlink.txt
+stat -c 'Name: %n | Inode: %i | Links: %h | Type: %F' original.txt hardlink.txt symlink.txt
+stat original.txt hardlink.txt symlink.txt
+readlink symlink.txt
+readlink -f symlink.txt
+
+Important Output (metadata_summary.txt):
+Name: original.txt | Inode: 262283 | Links: 2 | Type: regular file
+Name: hardlink.txt | Inode: 262283 | Links: 2 | Type: regular file
+Name: symlink.txt | Inode: 262293 | Links: 1 | Type: symbolic link
+readlink symlink.txt: original.txt
+readlink -f symlink.txt: /home/ubuntu/linux_lab_assignment/Question_3/original.txt
+
+Observation:
+Metadata confirms inode numbers, link counts, owner/group, and permissions.
+stat shows original.txt and hardlink.txt as regular files with shared metadata.
+symlink.txt is identified as a symbolic link with its own inode.
+
+6. Contents Before Deletion
+
+Commands:
+cat original.txt
+cat hardlink.txt
+cat symlink.txt
+
+Output:
+Important project data for link analysis
+Important project data for link analysis
+Important project data for link analysis
+
+Observation:
+Before deletion, all three names returned the same content.
+Hard link reads the same inode data directly.
+Symbolic link resolves the pathname to the target file first.
+
+7. Effect of Deleting the Original File
+
+Command:
+rm original.txt
+
+Files after deletion:
+262283 -rw------- 1 ubuntu ubuntu 41 Jun 20 15:34 hardlink.txt
+262293 lrwxrwxrwx 1 ubuntu ubuntu 12 Jun 20 15:35 symlink.txt -> original.txt
+
+Hard-link test:
+cat hardlink.txt
+
+Output:
+Important project data for link analysis
+
+Symbolic-link test:
+cat symlink.txt
+
+Output:
+cat: symlink.txt: No such file or directory
+
+Target-status test:
+readlink symlink.txt
+test -e symlink.txt && echo "Target exists" || echo "Target does not exist"
+
+Output:
+original.txt
+Target does not exist
+
+Observation:
+Deleting original.txt removed only that filename entry.
+hardlink.txt still works and now shows link count 1 because one hard-link name remains.
+symlink.txt remains as a link file, but it is dangling because target original.txt no longer exists.
+
+8. Hard Link and Symbolic Link Comparison
+
+Hard Link:
+A hard link is another directory entry that points to the same inode.
+It shares the same file data and survives deletion of another link name.
+Hard links generally do not cross filesystems.
+
+Symbolic Link:
+A symbolic link is a separate file with its own inode.
+It stores a target path, not the same inode data.
+It can cross filesystems but breaks if the target path is removed.
+
+9. Screenshot Evidence
+
+Screenshots captured for this question are stored in:
+Question_3/screenshot/screenshot_4.28.06.png
+Question_3/screenshot/screenshot_4.30.41.png
+
+10. Conclusion
+
+The analysis shows that hard links reference the same inode while symbolic links reference a pathname.
+In the screenshot evidence, original.txt and hardlink.txt share inode 262283, while symlink.txt has inode 262293.
+After deleting original.txt, hardlink.txt remained usable but symlink.txt became a dangling reference.
+This demonstrates inode-based persistence for hard links and path-based dependency for symbolic links.

@@ -1,0 +1,172 @@
+STORAGE HEALTH ASSESSMENT REPORT
+
+1. Available Storage Devices
+
+Command:
+lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS
+
+Output:
+NAME      SIZE TYPE FSTYPE  MOUNTPOINTS
+sda        20G disk
+├─sda1     19G part ext4    /
+├─sda13   923M part ext4    /boot
+└─sda15    99M part vfat    /boot/efi
+vda        54K disk iso9660
+
+Observation:
+The lsblk command displayed the available block devices, partitions, sizes, file-system types, and mount points.
+
+The main storage device is sda, which has a total virtual capacity of 20 GB. It contains three partitions. The sda1 partition is a 19 GB ext4 partition mounted as the root filesystem. The sda13 partition is a 923 MB ext4 partition mounted at /boot. The sda15 partition is a 99 MB vfat partition mounted at /boot/efi.
+
+The vda device is a small 54 KB ISO 9660 virtual device. Because the assessment was performed inside a Multipass virtual machine, these devices represent virtual storage rather than the Mac's physical disk.
+
+2. Mounted File Systems
+
+Command:
+findmnt
+
+Important output:
+TARGET      SOURCE       FSTYPE  OPTIONS
+/           /dev/sda1    ext4    rw,relatime,discard,errors=remount-ro,commit=30
+/run        tmpfs        tmpfs   rw,nosuid,nodev,size=797224k,nr_inodes=819200,mode=755,inode64
+/tmp        tmpfs        tmpfs   rw,nosuid,nodev,size=1993056k,nr_inodes=1048576,inode64,usrquota
+/dev        devtmpfs     devtmpfs rw,nosuid,size=1670664k,nr_inodes=417666,mode=755,inode64
+/dev/shm    tmpfs        tmpfs   rw,nosuid,nodev,inode64,usrquota
+/proc       proc         proc    rw,nosuid,nodev,noexec,relatime
+/sys        sysfs        sysfs   rw,nosuid,nodev,noexec,relatime
+/boot       /dev/sda13   ext4    rw,relatime
+/boot/efi   /dev/sda15   vfat    rw,relatime,fmask=0077,dmask=0077
+
+Observation:
+The findmnt command displayed the mounted file systems and their positions in the Linux directory tree.
+
+The root filesystem is mounted from /dev/sda1 using the ext4 file-system type. The /boot directory is mounted from /dev/sda13, while /boot/efi is mounted from /dev/sda15 using the vfat file-system type.
+
+Temporary and virtual filesystems such as tmpfs, proc, sysfs, and devtmpfs were also mounted successfully. These filesystems support system processes, devices, temporary data, and kernel information.
+
+3. Disk Usage Statistics
+
+Command:
+df -hT
+
+Output:
+Filesystem     Type      Size  Used Avail Use% Mounted on
+tmpfs          tmpfs     779M  1.2M  778M   1% /run
+/dev/sda1      ext4       19G  2.5G   16G  14% /
+tmpfs          tmpfs     2.0G     0  2.0G   0% /dev/shm
+efivarfs       efivarfs  256K   15K  242K   6% /sys/firmware/efi/efivars
+tmpfs          tmpfs     2.0G     0  2.0G   0% /tmp
+none           tmpfs     1.0M     0  1.0M   0% /run/credentials/systemd-journald.service
+none           tmpfs     1.0M     0  1.0M   0% /run/credentials/systemd-resolved.service
+/dev/sda13     ext4      891M  126M  704M  16% /boot
+/dev/sda15     vfat       98M  6.5M   91M   7% /boot/efi
+none           tmpfs     1.0M     0  1.0M   0% /run/credentials/systemd-networkd.service
+tmpfs          tmpfs     390M  8.0K  390M   1% /run/user/1000
+none           tmpfs     1.0M     0  1.0M   0% /run/credentials/getty@tty1.service
+none           tmpfs     1.0M     0  1.0M   0% /run/credentials/serial-[getty@ttyAMA0.service](mailto:getty@ttyAMA0.service)
+
+Root filesystem details:
+Total capacity: 19 GB
+Used storage: 2.5 GB
+Available storage: 16 GB
+Utilization: 14%
+
+Observation:
+The df command displayed total, used, and available storage in human-readable units. The -T option also displayed the file-system type.
+
+The root filesystem currently uses 14% of its available capacity. It has approximately 16 GB of free space remaining. The /boot partition uses 16%, while the /boot/efi partition uses 7%.
+
+The reported values show that the virtual server is not currently experiencing storage-capacity pressure.
+
+4. Inode Utilization
+
+Command:
+df -i
+
+Output:
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+tmpfs           819200    781  818419    1% /run
+/dev/sda1      2490368 108168 2382200    5% /
+tmpfs           498263      1  498262    1% /dev/shm
+efivarfs             0      0       0     - /sys/firmware/efi/efivars
+tmpfs          1048576     14 1048562    1% /tmp
+none               1024      1    1023    1% /run/credentials/systemd-journald.service
+none               1024      1    1023    1% /run/credentials/systemd-resolved.service
+/dev/sda13        59136    284   58852    1% /boot
+/dev/sda15            0      0       0     - /boot/efi
+none               1024      1    1023    1% /run/credentials/systemd-networkd.service
+tmpfs            99652     35   99617    1% /run/user/1000
+none               1024      1    1023    1% /run/credentials/getty@tty1.service
+none               1024      1    1023    1% /run/credentials/serial-[getty@ttyAMA0.service](mailto:getty@ttyAMA0.service)
+
+Root filesystem inode utilization:
+Total inodes: 2,490,368
+Inodes used: 108,168
+Inodes available: 2,382,200
+Inode usage percentage: 5%
+
+Observation:
+Inodes store metadata for files and directories. A filesystem can run out of inodes even when it still has available disk capacity.
+
+The root filesystem currently uses only 5% of its inodes and has 2,382,200 free inodes. This indicates that there is no immediate risk of inode exhaustion.
+
+The /boot filesystem also has low inode utilization at 1%.
+
+5. Workspace Storage Usage
+
+Command:
+du -sh .
+
+Output:
+44K    .
+
+Observation:
+The Question_5 workspace currently consumes only 44 KB of storage.
+
+The lab files occupy a very small amount of space compared with the 16 GB available on the root filesystem. The workspace therefore has no meaningful effect on the server's overall storage utilization.
+
+6. Storage Health Observations
+
+The available storage devices and mounted file systems were successfully detected.
+
+The primary virtual disk has a total capacity of 20 GB. Its root partition has a usable capacity of 19 GB, of which 2.5 GB is used and 16 GB is available.
+
+The root filesystem is operating at 14% disk utilization. This means approximately 86% of its capacity remains available.
+
+The root filesystem has an inode utilization of 5%, with 2,382,200 free inodes. There is no immediate inode-exhaustion risk.
+
+The /boot and /boot/efi partitions are mounted correctly and have low utilization levels of 16% and 7%, respectively.
+
+Based on disk-space and inode statistics, no immediate storage-capacity issue was observed.
+
+This assessment was performed inside an Ubuntu Multipass virtual machine. The commands confirm virtual storage capacity, mount status, disk utilization, and inode utilization. They do not confirm the physical SMART health of the Mac's underlying storage device.
+
+7. Recommendations for Improving Storage Utilization
+
+8. Maintain at least 15 to 20 percent free space on important file systems.
+
+9. Monitor disk usage regularly using the df -hT command.
+
+10. Monitor inode usage using df -i, especially for applications that create many small files.
+
+11. Configure log rotation so that application and system logs do not grow without limits.
+
+12. Remove obsolete temporary files, unused application data, cached packages, and old logs.
+
+13. Archive or compress files that are not accessed regularly.
+
+14. Configure monitoring alerts when disk-space or inode usage exceeds a threshold such as 80%.
+
+15. Maintain regular backups of important application files, configuration data, and databases.
+
+16. Review storage growth periodically and increase the virtual disk capacity before deploying storage-intensive workloads.
+
+17. Store application logs, uploaded files, and database data in appropriately sized partitions or external storage when required.
+
+Conclusion:
+
+The available storage devices, mounted file systems, disk utilization, inode usage, and workspace storage consumption were successfully assessed.
+
+The root filesystem currently uses 14% of its capacity and 5% of its available inodes. It has approximately 16 GB of free disk space and more than 2.38 million free inodes.
+
+The current virtual server has sufficient storage capacity for a small application deployment. Regular monitoring, log rotation, cleanup, backups, and capacity planning should be performed to maintain reliable storage operation.

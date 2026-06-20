@@ -1,0 +1,11 @@
+secure_workspace
+secure_workspace/source
+secure_workspace/source/config.env
+secure_workspace/logs
+secure_workspace/logs/application.log
+secure_workspace/private
+secure_workspace/documents
+secure_workspace/documents/project_plan.txt
+secure_workspace/documents/private_notes.txt
+secure_workspace/data
+secure_workspace/data/team_data.txt

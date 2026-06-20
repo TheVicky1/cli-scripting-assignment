@@ -1,0 +1,6 @@
+== cat original.txt ==
+Important project data for link analysis
+== cat hardlink.txt ==
+Important project data for link analysis
+== cat symlink.txt ==
+Important project data for link analysis

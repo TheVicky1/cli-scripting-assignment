@@ -1,0 +1,15 @@
+== ls -li ==
+35566288 -rw-------@ 2 taheer  staff  41 Jun 20 16:38 hardlink.txt
+35566288 -rw-------@ 2 taheer  staff  41 Jun 20 16:38 original.txt
+35566291 lrwx------@ 1 taheer  staff  12 Jun 20 16:38 symlink.txt -> original.txt
+
+== stat ==
+16777230 35566288 -rw------- 2 taheer staff 0 41 "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" 4096 8 0 original.txt
+16777230 35566288 -rw------- 2 taheer staff 0 41 "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" 4096 8 0 hardlink.txt
+16777230 35566291 lrwx------ 1 taheer staff 0 12 "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" "Jun 20 16:38:34 2026" 4096 0 0 symlink.txt
+
+== readlink symlink.txt ==
+original.txt
+
+== absolute target (readlink -f equivalent) ==
+/Users/taheer/Desktop/linux_lab_assignment/Question_3/original.txt

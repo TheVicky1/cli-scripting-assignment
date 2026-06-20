@@ -1,0 +1,3 @@
+35566288 -rw-------@ 2 taheer  staff  41 Jun 20 16:38 hardlink.txt
+35566288 -rw-------@ 2 taheer  staff  41 Jun 20 16:38 original.txt
+35566291 lrwx------@ 1 taheer  staff  12 Jun 20 16:38 symlink.txt -> original.txt

@@ -1,0 +1,70 @@
+Linux Environment Verification Report
+
+1. Command: whoami
+Output:
+ubuntu
+
+Observation:
+The whoami command displayed the username of the currently logged-in Linux user.
+The output confirms that the commands are being executed using the Ubuntu account.
+Files created during this lab will initially be owned by this user.
+
+2. Command: groups and id
+Output:
+ubuntu adm cdrom sudo dip lxd
+uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),24(cdrom),27(sudo),30(dip),102(lxd)
+
+Observation:
+The id command displayed the user ID, primary group ID, and supplementary groups of the Ubuntu account.
+The groups command listed the groups associated with the current user.
+These group memberships determine which files and system resources the user can access.
+
+3. Commands: echo "$SHELL" and ps -p $$ -o comm=
+Output:
+/bin/bash
+bash
+
+Observation:
+The SHELL environment variable displayed the configured login shell.
+The ps command confirmed that Bash was the shell currently running in the terminal.
+This shell is responsible for interpreting the Linux commands used in the lab.
+
+4. Command: pwd
+Output:
+/home/ubuntu/linux_lab_assignment/Question_1
+
+Observation:
+The pwd command displayed the absolute path of the current working directory.
+It confirmed that the commands were being executed inside the Question_1 folder.
+This helps verify that the generated files belong to the correct section of the assignment.
+
+5. Command: ls -la
+Output:
+total 12
+drwxr-xr-x 2 ubuntu ubuntu 4096 Jun 20 14:30 .
+drwxr-xr-x 7 ubuntu ubuntu 4096 Jun 20 14:25 ..
+-rw-r--r-- 1 ubuntu ubuntu 2404 Jun 20 14:25 Environment_Report_macOS_old.txt
+
+Observation:
+The ls -la command displayed all files and directories, including hidden entries.
+The Question_1 directory currently contains the previous macOS report file.
+The output also shows that the file is owned by the Ubuntu user and has read and write permissions for the owner.
+
+
+6. Command: ping -c 4 8.8.8.8
+Output:
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=115 time=10.8 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=115 time=12.9 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=115 time=10.2 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=115 time=10.5 ms
+
+--- 8.8.8.8 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3151ms
+rtt min/avg/max/mdev = 10.155/11.085/12.925/1.083 ms
+
+Observation:
+The ping command sent four packets to the external IP address 8.8.8.8.
+All four packets were received successfully with zero packet loss.
+The average response time was approximately 11.085 milliseconds, confirming stable network connectivity.
+
